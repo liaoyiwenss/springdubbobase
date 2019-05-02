@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    
+    <title>My JSP 'RightBar.jsp' starting page</title>
+    
+	<meta http-equiv="pragma" content="no-cache"/>
+	<meta http-equiv="cache-control" content="no-cache"/>
+	<meta http-equiv="expires" content="0"/>
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3"/>
+	<meta http-equiv="description" content="This is my page"/>
+	<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+
+  </head>
+  
+  <body>
+    <div class="nav">
+        	<div class="nav_t">全部商品分类</div>
+            <div class="leftNav">
+                <ul>      
+                
+
+    				 <li th:each="list,Stat:${pclist}">
+                    	<div class="fj">
+                        	<span class="n_img"><span></span><img th:src="@{/static/images/nav1.png}" /></span>
+    							<a href="/doproduct/queryproductList?productid=${list.pc.tid}"> <span class="fl">${list.pc.name}</span></a>
+    					</div>		
+    					<div class="zj">
+                            <div class="zj_l">
+                                <div class="zj_l_c" th:each="list1,Stat:${list.pcVOList}">
+                                 <h2><a href="/doproduct/queryproductList?productid=${list1.pc.tid}">${list1.pc.name}</a></h2>
+                                  <a th:each="list2,Stat:${list1.pcVOList}" href="/doproduct/queryproductList?productid=${list2.pc.tid}">${list2.pc.name}</a>
+                                </div>
+                            </div>
+                            <div class="zj_r">
+                                <a href="#"><img th:src="@{/static/images/n_img1.jpg}" width="236" height="200" /></a>
+                                <a href="#"><img th:src="@{/static/images/n_img2.jpg}" width="236" height="200" /></a>
+                            </div>
+                        </div>
+                    </li>
+
+                   </ul> 
+            </div>
+        </div> 
+        
+        
+        
+        <ul class="menu_r">
+        <li><a href="/show/Index">首页</a></li>
+        <li th:each="list,Stat:${pclist}"   style=''><a  style='th:if="${#strings.length(list.pc.name) gt 5? "width:100px" : "" }' href="/doproduct/queryproductList?productid=${list.pc.tid}">${list.pc.name}</a>
+				</li>
+			</ul>
+	<script>
+	jQuery(".leftNav").addClass("none");
+	</script>
+  </body>
+</html>
