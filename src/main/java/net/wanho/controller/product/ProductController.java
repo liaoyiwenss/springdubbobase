@@ -5,6 +5,7 @@ import net.wanho.pojo.Product;
 import net.wanho.pojo.Productcategory;
 import net.wanho.service.product.ProductCategoryService;
 import net.wanho.service.product.ProductService;
+import net.wanho.utils.FastDFSClient;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,22 +103,23 @@ public class ProductController {
                     file.getOriginalFilename().indexOf("."));// 取文件格式后缀名
             String filename = UUID.randomUUID() + type;// 取当前时间戳作为文件名
             product.setFilename(filename);
-            String path = request.getSession().getServletContext()
-                    .getRealPath("/files/"+ filename);// 存放位置
-            File destFile = new File(path);
-//            String realpath="D:\\workspace\\Sumpermarkets\\WebContent\\files\\"+filename;
-//            File realFile=new File(realpath);
-            try {
-                /*file.transferTo(destFile);*/
-                // FileUtils.copyInputStreamToFile()这个方法里对IO进行了自动操作，不需要额外的再去关闭IO流
-                FileUtils.copyInputStreamToFile(file.getInputStream(), destFile);// 复制临时文件到指定目录下
-//                FileUtils.copyInputStreamToFile(file.getInputStream(), realFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+            //使用fastdfs文件上传
+            String str = FastDFSClient.uploadFile(file);
+            System.out.println(str);
+            FastDFSClient.getResAccessUrl(str);
+//          //获取本地服务器文件上传
+//            String path = request.getSession().getServletContext()
+//                    .getRealPath("/files/"+ filename);// 存放位置
+//            File destFile = new File(path);
+//            try {
+//                FileUtils.copyInputStreamToFile(file.getInputStream(), destFile);// 复制临时文件到指定目录下
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
         int r = 0;
-        if(action.equals("add"))
+       /* if(action.equals("add"))
         {
                 r = productService.insert(product);
         }
@@ -130,7 +132,7 @@ public class ProductController {
                     product.setFilename(updateproduct.getFilename());
                 }
                 r=productService.updateByPrimaryKey(product);
-        }
+        }*/
             return "redirect:/doproduct/getallproduct";
     }
 

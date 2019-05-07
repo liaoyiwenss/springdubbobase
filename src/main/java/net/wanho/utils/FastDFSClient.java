@@ -45,6 +45,17 @@ public class FastDFSClient {
         }
     }
 
+
+    public static String uploadFileAndRename(MultipartFile multipartFile,String filename) {
+        try {
+            StorePath storePath = fastFileStorageClient.uploadFile(multipartFile.getInputStream(), multipartFile.getSize(), FilenameUtils.getExtension(filename), null);
+            return storePath.getFullPath();
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+
     /**
      * @param multipartFile 图片对象
      * @return 返回图片地址
