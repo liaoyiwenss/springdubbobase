@@ -99,14 +99,15 @@ public class ProductController {
         product.setPrice(price);
         product.setStock(stock);
         if (!file.isEmpty()) {
-            String type = file.getOriginalFilename().substring(
-                    file.getOriginalFilename().indexOf("."));// 取文件格式后缀名
-            String filename = UUID.randomUUID() + type;// 取当前时间戳作为文件名
-            product.setFilename(filename);
+//            String type = file.getOriginalFilename().substring(
+//                    file.getOriginalFilename().indexOf("."));// 取文件格式后缀名
+//            String filename = UUID.randomUUID() + type;// 取当前时间戳作为文件名
+
 
             //使用fastdfs文件上传
             String str = FastDFSClient.uploadFile(file);
             System.out.println(str);
+            product.setFilename("/"+str);
             FastDFSClient.getResAccessUrl(str);
 //          //获取本地服务器文件上传
 //            String path = request.getSession().getServletContext()
@@ -119,7 +120,7 @@ public class ProductController {
 //            }
         }
         int r = 0;
-       /* if(action.equals("add"))
+        if(action.equals("add"))
         {
                 r = productService.insert(product);
         }
@@ -132,7 +133,7 @@ public class ProductController {
                     product.setFilename(updateproduct.getFilename());
                 }
                 r=productService.updateByPrimaryKey(product);
-        }*/
+        }
             return "redirect:/doproduct/getallproduct";
     }
 

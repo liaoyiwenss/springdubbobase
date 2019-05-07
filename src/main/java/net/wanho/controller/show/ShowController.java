@@ -52,7 +52,7 @@ public class ShowController {
         map.put("productlist5",productPageInfo5.getList());
         map.put("productlist6",productPageInfo6.getList());
         String filepath=request.getContextPath();
-        session.setAttribute("filepath", filepath+"/files/");
+        session.setAttribute("filepath", ""+"http://192.168.232.128");
         return "Index";
     }
 
