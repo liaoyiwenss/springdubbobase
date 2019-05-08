@@ -131,6 +131,11 @@ public class ProductController {
                 if(file.isEmpty())
                 {
                     product.setFilename(updateproduct.getFilename());
+                }else {
+                    if(updateproduct.getFilename()!=null&&updateproduct.getFilename()!="")
+                    {
+                        FastDFSClient.deleteFile(updateproduct.getFilename().substring(1,product.getFilename().length()));
+                    }
                 }
                 r=productService.updateByPrimaryKey(product);
         }
