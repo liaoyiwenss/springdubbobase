@@ -15,4 +15,7 @@ public interface ProductCategoryService extends BaseService<Productcategory> {
     public PageInfo<Productcategory> queryProductCategoryList(Integer start, Integer limit, Integer navigatePages);
 
     List<Productcategory> queryProductCategoryListbyParentId(Long parentid);
+
+
+    public List<ProductCategoryVO> getProductCategoryVOList(List<Productcategory> list);
 }

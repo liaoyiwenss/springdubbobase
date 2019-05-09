@@ -27,6 +27,7 @@ public class ProductCategoryServiceimpl implements ProductCategoryService {
 
     @Override
     public int deleteByPrimaryKey(Long tid) {
+        jedisClient.del("pclist");
         return productcategoryMapper.deleteByPrimaryKey(tid);
     }
 
@@ -52,6 +53,7 @@ public class ProductCategoryServiceimpl implements ProductCategoryService {
 
     @Override
     public int updateByPrimaryKey(Productcategory record) {
+        jedisClient.del("pclist");
         return productcategoryMapper.updateByPrimaryKey(record);
     }
 
