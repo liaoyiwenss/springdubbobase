@@ -108,7 +108,7 @@
         </c:if>
         <c:if test="${not empty users}">
 
-            <shiro:hasRole name="admin">
+            <shiro:hasRole name="superadmin">
 			 <span class="fl">${users.username}<a href="${pageContext.request.contextPath}/douser/Invilidaty">注销</a>&nbsp; <a href="${pageContext.request.contextPath}/doorder/orderdetail?flag=1" style="color:#ff4e00;">后台管理</a>&nbsp;|&nbsp;<a href="${pageContext.request.contextPath}/servlet/Orderdetail?flag=1">我的订单</a>&nbsp;|</span>
             </shiro:hasRole>
             <shiro:hasRole name="user">

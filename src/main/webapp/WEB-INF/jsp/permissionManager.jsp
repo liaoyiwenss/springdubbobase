@@ -49,14 +49,6 @@
                     <tr>
                         <td>${temp.rolename}</td>
                         <td>
-                            <form class="permissionfrom" style="display: none" id="">
-                                <c:forEach items="${temp.permissions}" var="permission">
-                                    <input name="id" value="${permission.tid}"/>
-                                    <input name="pid" value="${permission.pid}"/>
-                                    <input name="name" value="${permission.permissionname}"/>
-                                    <input name="open" value="true"/>
-                                </c:forEach>
-                            </form>
                             <a onclick="ShowDiv_1('MyDiv1','fade1','${status.index}','${temp.tid}')">修改</a>
                         </td>
                         <td>
@@ -102,27 +94,27 @@
             <span class="fr" style="margin-top:10px; cursor:pointer;" onclick="CloseDiv_1('MyDiv1','fade1')"><img src="${pageContext.request.contextPath}/images/close.gif" /></span>
         </div>
         <div class="notice_c">
-                <input type="hidden" id="roleid" value=""/>
-                <div class="zTreeDemoBackground left">
-                    <ul id="treeDemo" class="ztree"></ul>
-                    <input id="rpbutton" type="button" value="角色权限修改"/>
-                </div>
-                <div class="right">
-                    <ul class="info">
-                        <ul class="list">
-                            <li class="highlight_red">必须设置属性</li>
-                            <li><p>父节点和子节点之间的链接关系:<br/>
-                                选中: <input type="checkbox" id="py" class="checkbox first" checked /><span>影响父节点</span>
-                                <input type="checkbox" id="sy" class="checkbox first" checked /><span>影响子节点</span><br/>
-                                未选中: <input type="checkbox" id="pn" class="checkbox first" checked /><span>影响父节点</span>
-                                <input type="checkbox" id="sn" class="checkbox first" checked /><span>影响子节点</span><br/>
-                            </p>
-                            </li>
-                        </ul>
+            <input type="hidden" id="roleid" value=""/>
+            <div class="zTreeDemoBackground left">
+                <ul id="treeDemo" class="ztree"></ul>
+                <input id="rpbutton" type="button" value="角色权限修改"/>
+            </div>
+            <div class="right">
+                <ul class="info">
+                    <ul class="list">
+                        <li class="highlight_red">必须设置属性</li>
+                        <li><p>父节点和子节点之间的链接关系:<br/>
+                            选中: <input type="checkbox" id="py" class="checkbox first" checked /><span>影响父节点</span>
+                            <input type="checkbox" id="sy" class="checkbox first" checked /><span>影响子节点</span><br/>
+                            未选中: <input type="checkbox" id="pn" class="checkbox first" checked /><span>影响父节点</span>
+                            <input type="checkbox" id="sn" class="checkbox first" checked /><span>影响子节点</span><br/>
+                        </p>
                         </li>
                     </ul>
-                </div>
+                    </li>
+                </ul>
             </div>
+        </div>
     </div>
 </div>
 <!--End 弹出层-加入购物车 End-->
@@ -147,16 +139,30 @@
         debugger
 
         // var mynodes=$("#roletable from:nth-of-type("+index+")").serializeObject();
-        var checknode=$(".permissionfrom:nth-of-type("+index+1+")").serializeObject();
+        // var checknode=$(".permissionfrom:nth-of-type("+index+1+")").serializeObject();
         /*var mynodes=$(this).prev().serializeObject();*/
 
+        var checknode;
         var permissions='${permissions}';
 
         var mynode=$.parseJSON(permissions);
 
-        $.each(mynode,function (i, n) {
-            $.each(checknode.id, function(index, value) {
+        $.ajax({
+            "url": path + "/dopermission/queryallPermissonbyRoleid",
+            "type": "post",
+            "data": {"roleid": roleid},
+            "dataType": "Json",
+            async: false,
+            "success": function (result) {
 
+                checknode=JSON.parse(result);
+            }
+        })
+
+
+
+        $.each(mynode,function (i, n) {
+            $.each(checknode, function(index, value) {
                 debugger
                 if(n.tid==value)
                 {
@@ -164,6 +170,7 @@
                 }
             })
         })
+
         $.fn.zTree.init($("#treeDemo"), setting, mynode);
         // bgdiv.style.height = $(document).height();
         // setTimeout("CloseDiv_1('MyDiv1','fade1')",1000);
