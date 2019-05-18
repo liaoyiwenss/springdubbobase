@@ -37,6 +37,13 @@ public class ShowController {
 //        List<ProductCategoryVO> pclist = productCategoryService.getDomList();
         List<ProductCategoryVO> domList = productCategoryService.getDomList();
         session.setAttribute("pclist",domList);
+//        PageInfo<Product> productPageInfo = productService.selectProductbyEntity(null,null,0, 6, 1);
+//        PageInfo<Product> productPageInfo1 =productService.selectProductbyEntity(null,null,1,6,1);
+//        PageInfo<Product> productPageInfo2 =productService.selectProductbyEntity(null,null,2,6,1);
+//        PageInfo<Product> productPageInfo3 =productService.selectProductbyEntity(null,null,3,6,1);
+//        PageInfo<Product> productPageInfo4 =productService.selectProductbyEntity(null,null,4,6,1);
+//        PageInfo<Product> productPageInfo5 =productService.selectProductbyEntity(null,null,5,6,1);
+//        PageInfo<Product> productPageInfo6 =productService.selectProductbyEntity(null,null,6,6,1);
         PageInfo<Product> productPageInfo = productService.selectProductbyEntity(null,null,0, 6, 1);
         PageInfo<Product> productPageInfo1 =productService.selectProductbyEntity(null,null,1,6,1);
         PageInfo<Product> productPageInfo2 =productService.selectProductbyEntity(null,null,2,6,1);
@@ -52,6 +59,8 @@ public class ShowController {
         map.put("productlist5",productPageInfo5.getList());
         map.put("productlist6",productPageInfo6.getList());
         String filepath=request.getContextPath();
+
+        productService.importAlltoSolr();
         session.setAttribute("filepath", ""+"http://192.168.232.128");
         return "Index";
     }

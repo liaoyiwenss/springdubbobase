@@ -6,15 +6,21 @@ import net.wanho.pojo.Productcategory;
 import net.wanho.service.product.ProductCategoryService;
 import net.wanho.service.product.ProductService;
 import net.wanho.utils.FastDFSClient;
+import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.commons.io.FileUtils;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.jms.Destination;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
@@ -30,6 +36,16 @@ public class ProductController {
 
     @Autowired
     private ProductCategoryService productCategoryService;
+
+
+    @Autowired
+    private JmsMessagingTemplate jmsTemplate;
+
+
+    @Autowired
+    private SolrClient solrClient;
+
+
 
 
     private Logger logger= LoggerFactory.getLogger(ProductController.class);
@@ -49,8 +65,22 @@ public class ProductController {
         }else if(productid!=null) {
             session.setAttribute("pcid", productid);
         }
+        PageInfo<Product> productPageInfo=null;
+        if(productid!=null)
+        {
+            productPageInfo = productService.selectProductbyEntity(productid,proName,pageno, 5, 4);
+        }else
+        {
+            try {
+                productPageInfo = productService.queryItem(productid,proName,pageno, 5, 4);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (SolrServerException e) {
+                e.printStackTrace();
+            }
 
-        PageInfo<Product> productPageInfo = productService.selectProductbyEntity(productid,proName,pageno, 5, 4);
+        }
+
 
         session.setAttribute("pagehelper",productPageInfo);
 
@@ -119,10 +149,14 @@ public class ProductController {
 //                e.printStackTrace();
 //            }
         }
+        Destination destination = new ActiveMQQueue("item_add_html.queue");
         int r = 0;
         if(action.equals("add"))
         {
                 r = productService.insert(product);
+
+
+//            jmsTemplate.convertAndSend(destination, product.getTid()+"");
         }
         if(action.equals("update"))
         {
@@ -138,8 +172,31 @@ public class ProductController {
                     }
                 }
                 r=productService.updateByPrimaryKey(product);
+
+
+//            jmsTemplate.convertAndSend(destination, product.getTid()+"");
         }
-            return "redirect:/doproduct/getallproduct";
+        SolrInputDocument document = new SolrInputDocument();
+        document.addField("id", product.getTid());
+        document.addField("tid", product.getTid());
+        document.addField("product_name", product.getName());
+        document.addField("product_description", product.getDescription());
+        document.addField("product_stock", product.getStock());
+        document.addField("product_price", product.getPrice());
+        document.addField("categorylevel1id", product.getCategorylevel1id());
+        document.addField("categorylevel2id", product.getCategorylevel2id());
+        document.addField("categorylevel3id", product.getCategorylevel3id());
+        document.addField("product_filename", product.getFilename());
+        try {
+            solrClient.add(document);
+            solrClient.commit();
+        } catch (SolrServerException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/doproduct/getallproduct";
     }
 
 
